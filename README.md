@@ -1,0 +1,1 @@
+# AspNetCoreApp-in-azure-function
