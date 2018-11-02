@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiWebApp", "ApiWebApp\ApiWebApp.csproj", "{6B2E899F-04F9-4A06-9FDA-50CA78A83EE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiWebApp", "ApiWebApp\ApiWebApp.csproj", "{6B2E899F-04F9-4A06-9FDA-50CA78A83EE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureApiFunction", "AzureApiFunction\AzureApiFunction.csproj", "{A826C808-10EF-4C0A-A19D-EEB84363A19F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureApiFunction", "AzureApiFunction\AzureApiFunction.csproj", "{A826C808-10EF-4C0A-A19D-EEB84363A19F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
