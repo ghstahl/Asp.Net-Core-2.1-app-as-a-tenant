@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using ApiWebApp;
 using Microsoft.AspNetCore.Hosting;
@@ -60,7 +61,14 @@ namespace AzureApiFunction
                         select c;
                     content = new FormUrlEncodedContent(query);
                 }
-
+                if (req.ContentType == "application/json")
+                {
+                    using (StreamReader reader = new StreamReader(req.Body, Encoding.UTF8))
+                    {
+                        var json = await reader.ReadToEndAsync();
+                        content = new StringContent(json, Encoding.UTF8, "application/json");
+                    }
+                }
                 if (content == null)
                 {
                     throw new UnsupportedContentTypeException($"{req.ContentType}");
