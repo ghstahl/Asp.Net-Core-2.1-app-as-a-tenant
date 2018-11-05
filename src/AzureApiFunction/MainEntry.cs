@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using ApiWebApp;
+using Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -56,18 +57,11 @@ namespace AzureApiFunction
                 HttpContent content = null;
                 if (req.ContentType == "application/x-www-form-urlencoded")
                 {
-                    var query = from item in req.Form
-                        let c = new KeyValuePair<string, string>(item.Key, item.Value)
-                        select c;
-                    content = new FormUrlEncodedContent(query);
+                    content = req.Form.ToFormUrlEncodedContent();
                 }
                 if (req.ContentType == "application/json")
                 {
-                    using (StreamReader reader = new StreamReader(req.Body, Encoding.UTF8))
-                    {
-                        var json = await reader.ReadToEndAsync();
-                        content = new StringContent(json, Encoding.UTF8, "application/json");
-                    }
+                    content = await req.Body.ToJsonContentAsync();
                 }
                 if (content == null)
                 {
