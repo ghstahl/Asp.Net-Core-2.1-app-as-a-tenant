@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -18,36 +19,29 @@ using Newtonsoft.Json;
 
 namespace AzureApiFunction
 {
-    public static class TheHost
-    {
-        private static TestServer Server;
 
-        public static TestServer GetServer()
-        {
-            if (Server == null)
-            {
-                Server = new TestServer(new WebHostBuilder()
-                      .UseStartup<Startup>());
-            }
-
-            return Server;
-        }
-
-    }
     public static class MainEntry
     {
         [FunctionName("MainEntry")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "MainEntry/{*all}")]
+            ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "{*all}")]
             HttpRequest req,
             ILogger log)
         {
-            var path = req.Path.Value.Substring(10) + req.QueryString.Value;
-            HttpClient client = TheHost.GetServer().CreateClient();
+            var path = req.Path.Value + req.QueryString.Value;
+            log.LogInformation($"C# HTTP trigger:{req.Method} {path}.");
+
+            HttpClient client = TheHost.GetServer(context, req, log).CreateClient();
+            client.BaseAddress = new Uri($"{req.Scheme}://{req.Host}/");
             foreach (var header in req.Headers)
             {
                 IEnumerable<string> values = header.Value;
-                client.DefaultRequestHeaders.Add(header.Key, values);
+                if (header.Key == "Host")
+                {
+                    continue;
+                }
+                client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, values);
             }
 
             HttpResponseMessage response = null;
@@ -58,9 +52,22 @@ namespace AzureApiFunction
 
             if (req.Method == "POST")
             {
-                response = await client.PostAsync(path,new StreamContent(req.Body));
+                HttpContent content = null;
+                if (req.ContentType == "application/x-www-form-urlencoded")
+                {
+                    var query = from item in req.Form
+                        let c = new KeyValuePair<string, string>(item.Key, item.Value)
+                        select c;
+                    content = new FormUrlEncodedContent(query);
+                }
+
+                if (content == null)
+                {
+                    throw new UnsupportedContentTypeException($"{req.ContentType}");
+                }
+                response = await client.PostAsync(path, content);
             }
-           
+
             return response;
         }
     }
