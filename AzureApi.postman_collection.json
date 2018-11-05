@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "bdbf385d-23ff-4679-81ee-84e97d777c38",
+		"name": "AzureApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{domain}}",
+					"host": [
+						"{{domain}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Form",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "a",
+							"value": "b",
+							"type": "text"
+						},
+						{
+							"key": "b",
+							"value": "c",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{domain}}/api/Form",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"Form"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post JSON",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\":\"walk dog\",\r\n  \"isComplete\":true\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/todo",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"todo"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
