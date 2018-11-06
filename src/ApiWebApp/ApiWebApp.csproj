@@ -9,11 +9,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphQL" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GraphQL.StartWars.Standard\GraphQL.StartWars.Standard.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
   </ItemGroup>
 
