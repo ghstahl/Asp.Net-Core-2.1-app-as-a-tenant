@@ -8,39 +8,36 @@ namespace ApiWebApp
 {
     public class RewriteLowerCaseRule : IRule
     {
-        public int StatusCode { get; } = (int)HttpStatusCode.MovedPermanently;
-
         public void ApplyRule(RewriteContext context)
         {
-            HttpRequest request = context.HttpContext.Request;
-            PathString path = context.HttpContext.Request.Path;
-            PathString pathBase = context.HttpContext.Request.PathBase;
-            HostString host = context.HttpContext.Request.Host;
-
-            if (path.HasValue && path.Value.Any(char.IsUpper) || host.HasValue && host.Value.Any(char.IsUpper))
+            var request = context.HttpContext.Request;
+            var host = request.Host;
+            var pathBase = request.PathBase;
+            var path = request.Path;
+            if (host.HasValue)
             {
-                HostString hostLower;
                 if (host.Port == null)
                 {
-                    hostLower = new HostString(host.Host.ToLower());
+                    request.Host = new HostString(host.Host.ToLower());
                 }
                 else
                 {
-                    hostLower = new HostString(host.Host.ToLower(),(int)host.Port);
+                    request.Host = new HostString(host.Host.ToLower(), (int) host.Port);
                 }
-                context.HttpContext.Request.Host = hostLower;
-
-                PathString pathLower = new PathString(path.Value.ToLower());
-                context.HttpContext.Request.Path = pathLower;
-
-                PathString pathBaseLower = new PathString(pathBase.Value.ToLower());
-                context.HttpContext.Request.PathBase = pathBaseLower;
-
             }
-            else
+
+            if (pathBase.HasValue)
             {
-                context.Result = RuleResult.ContinueRules;
+                request.PathBase = new PathString(pathBase.Value.ToLower());
             }
+
+            if (path.HasValue)
+            {
+                request.Path = new PathString(path.Value.ToLower());
+                request.PathBase = new PathString(pathBase.Value.ToLower());
+            }
+
+            context.Result = RuleResult.ContinueRules;
         }
     }
 }
