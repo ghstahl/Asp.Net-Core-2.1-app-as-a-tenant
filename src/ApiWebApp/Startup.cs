@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiWebApp.Controllers;
+using ApiWebApp.Middleware;
 using GraphQL;
 using GraphQL.StartWars.Standard.Extensions;
 using Helpers;
 using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,17 +39,23 @@ namespace ApiWebApp
             _hostingEnvironment = hostingEnvironment;
             _externalStartupConfiguration = externalStartupConfiguration;
             _externalStartupConfiguration.ConfigureEnvironment(hostingEnvironment);
-            Configuration = configuration;
+            StartupConfiguration(configuration);
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<PathPolicyConfig>(Configuration.GetSection(PathPolicyConfig.WellKnown_SectionName));
+           
+
             services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+           
+
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
@@ -64,11 +72,18 @@ namespace ApiWebApp
                     options.ApiName = "nitro";
               
                 });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsAuthenticatedPolicy", policy =>
+                    policy.Requirements.Add(new IsAuthenticatedAuthorizationRequirement()));
+            });
+            services.AddSingleton<IAuthorizationHandler, SimpleAuthorizationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+           
             _externalStartupConfiguration.Configure(app, env, loggerFactory);
             if (env.IsDevelopment())
             {
@@ -79,10 +94,29 @@ namespace ApiWebApp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
+            app.UseHttpsRedirection();// redirect to https is more important than authentication, so it goes first
+            app.UseAuthentication();  // make sure this is placed close to first in the pipeline.
+
+            // app.UsePathAuthorizationPolicyMiddleware must come AFTER app.UseAuthentication();
+            // app.UseAuthentication(); does the JWT stuff, and the things after rely on it.
+            app.UsePathAuthorizationPolicyMiddleware(new PathAuthorizationPolicyMiddlewareOptions());
             app.UseMvc();
-           
+
+        }
+        private void StartupConfiguration(IConfiguration configuration)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(_hostingEnvironment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{_hostingEnvironment.EnvironmentName}.json", optional: true);
+
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+                builder.AddUserSecrets<Startup>();
+            }
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
     }
 }
