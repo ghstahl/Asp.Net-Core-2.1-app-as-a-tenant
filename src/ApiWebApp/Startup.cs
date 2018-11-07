@@ -6,6 +6,7 @@ using ApiWebApp.Controllers;
 using GraphQL;
 using GraphQL.StartWars.Standard.Extensions;
 using Helpers;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -17,8 +18,13 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+
 namespace ApiWebApp
 {
+    public class Constants
+    {
+        public const string Authority = "https://p7identityserver4.azurewebsites.net/";
+    }
     public class Startup
     {
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -49,6 +55,15 @@ namespace ApiWebApp
 
             // Pass configuration (IConfigurationRoot) to the configuration service if needed
             _externalStartupConfiguration.ConfigureService(services, null);
+
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = Constants.Authority;
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "nitro";
+              
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,7 +80,9 @@ namespace ApiWebApp
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
+           
         }
     }
 }
