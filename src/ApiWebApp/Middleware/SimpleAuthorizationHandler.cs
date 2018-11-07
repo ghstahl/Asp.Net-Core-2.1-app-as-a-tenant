@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace ApiWebApp.Middleware
 {
     public class SimpleAuthorizationHandler :
-        AuthorizationHandler<IsAuthenticatedAuthorizationRequirement, NullResource>
+        AuthorizationHandler<IsAuthenticatedAuthorizationRequirement, HttpRequestResource>
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
             IsAuthenticatedAuthorizationRequirement requirement,
-            NullResource resource)
+            HttpRequestResource resource)
         {
             if (context.User.Identity != null)
             {

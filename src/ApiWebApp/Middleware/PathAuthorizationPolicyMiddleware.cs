@@ -29,20 +29,87 @@ namespace ApiWebApp.Middleware
 
         public async Task Invoke(HttpContext httpContext, IAuthorizationService authorizationService)
         {
-            foreach (var record in _settings.Value.OptIn)
+            var resource = new HttpRequestResource() {Request = httpContext.Request};
+            if (_settings.Value.OptIn != null)
             {
-                var policy = record.Policy;
-                foreach (var path in record.Paths)
+                foreach (var record in _settings.Value.OptIn)
                 {
-                    if (httpContext.Request.Path.StartsWithSegments(path))
+                    var policy = record.Policy;
+                    bool foundPerfectMatch = false;
+                    var query = from item in record.Paths
+                        where item == httpContext.Request.Path
+                        select item;
+                    if (!query.Any())
                     {
+                        foundPerfectMatch = true;
                         // gotcha.
                         var authorized = await authorizationService.AuthorizeAsync(
-                            httpContext.User, new NullResource(), policy);
+                            httpContext.User, resource, policy);
                         if (!authorized.Succeeded)
                         {
                             httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                             return;
+                        }
+                    }
+
+                    if (!foundPerfectMatch)
+                    {
+                        // match starting segments
+                        query = from item in record.Paths
+                            where item != "/" && httpContext.Request.Path.StartsWithSegments(item)
+                            select item;
+                        if (!query.Any())
+                        {
+                            // gotcha.
+                            var authorized = await authorizationService.AuthorizeAsync(
+                                httpContext.User, resource, policy);
+                            if (!authorized.Succeeded)
+                            {
+                                httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                                return;
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            if (_settings.Value.OptOut != null)
+            {
+                foreach (var record in _settings.Value.OptOut)
+                {
+                    // look for a perfect match
+                    var policy = record.Policy;
+                    bool foundPerfectMatch = false;
+                    var query = from item in record.Paths
+                        where item == httpContext.Request.Path
+                        select item;
+                    if (!query.Any())
+                    {
+                        foundPerfectMatch = true;
+                        var authorized = await authorizationService.AuthorizeAsync(
+                            httpContext.User, resource, policy);
+                        if (!authorized.Succeeded)
+                        {
+                            httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            return;
+                        }
+                    }
+
+                    if (!foundPerfectMatch)
+                    {
+                        // match starting segments
+                        query = from item in record.Paths
+                            where item != "/" && !httpContext.Request.Path.StartsWithSegments(item)
+                            select item;
+                        if (!query.Any())
+                        {
+                            var authorized = await authorizationService.AuthorizeAsync(
+                                httpContext.User, resource, policy);
+                            if (!authorized.Succeeded)
+                            {
+                                httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                                return;
+                            }
                         }
                     }
                 }
