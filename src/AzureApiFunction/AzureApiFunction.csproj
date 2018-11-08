@@ -6,13 +6,23 @@
   <ItemGroup>
     <None Remove="appsettings.Development.json" />
     <None Remove="appsettings.json" />
+    <None Remove="SimpleApiWebApp\appsettings.Development.json" />
+    <None Remove="SimpleApiWebApp\appsettings.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="appsettings.Development.json">
+    <Content Include="ApiWebApp\appsettings.Development.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="appsettings.json">
+    <Content Include="ApiWebApp\appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SimpleApiWebApp\appsettings.Development.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SimpleApiWebApp\appsettings.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -24,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ApiWebApp\ApiWebApp.csproj" />
+    <ProjectReference Include="..\SimpleApiWebApp\SimpleApiWebApp.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

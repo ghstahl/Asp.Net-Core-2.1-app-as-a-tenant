@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace ApiWebApp.Controllers
+namespace SimpleApiWebApp.Controllers
 {
     [Route("")]
     [ApiController]
@@ -37,7 +37,6 @@ namespace ApiWebApp.Controllers
                     _output = new Dictionary<string, object>
                     {
                         {"version", "1.0"},
-                        {"application", "AzureApiFunction"},
                         {"author", "Herb Stahl"},
                         {"credits", credits},
 
@@ -63,6 +62,7 @@ namespace ApiWebApp.Controllers
                 value.Add(item.Key,item.Value);
             }
             value.Add("authority", $"{request.Scheme}://{request.Host.Value}");
+            value.Add("application", _configuration["name"]);
 
             return value;
         }

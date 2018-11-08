@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -31,10 +32,25 @@ namespace AzureApiFunction
             HttpRequest req,
             ILogger log)
         {
-            var path = req.Path.Value + req.QueryString.Value;
+            var serverRecords = TheHost.GetServerRecords(req,context,log);
+            var path = req.Path.Value.ToLower();
+            var query = from item in serverRecords
+                where path.StartsWith($"/{item.Key}")
+                select item.Value;
+            var serverRecord = query.FirstOrDefault();
+            HttpResponseMessage response = null;
+            if (serverRecord == null)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.NotFound);
+                return response;
+            }
+
+            path = path.Substring(serverRecord.Server.Length+1);
+            path = path + req.QueryString.Value;
+
             log.LogInformation($"C# HTTP trigger:{req.Method} {path}.");
 
-            HttpClient client = TheHost.GetServer(context, req, log).CreateClient();
+            HttpClient client = serverRecord.TestServer.CreateClient();
             client.BaseAddress = new Uri($"{req.Scheme}://{req.Host}/");
             foreach (var header in req.Headers)
             {
@@ -43,10 +59,11 @@ namespace AzureApiFunction
                 {
                     continue;
                 }
+
                 client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, values);
             }
 
-            HttpResponseMessage response = null;
+
             if (req.Method == "GET")
             {
                 response = await client.GetAsync(path);
@@ -59,14 +76,18 @@ namespace AzureApiFunction
                 {
                     content = req.Form.ToFormUrlEncodedContent();
                 }
+
                 if (req.ContentType == "application/json")
                 {
                     content = await req.Body.ToJsonContentAsync();
                 }
+
                 if (content == null)
                 {
-                    throw new UnsupportedContentTypeException($"{req.ContentType}");
+                    response = new HttpResponseMessage(HttpStatusCode.UnsupportedMediaType);
+                    return response;
                 }
+
                 response = await client.PostAsync(path, content);
             }
 

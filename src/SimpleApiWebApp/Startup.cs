@@ -1,37 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using ApiWebApp.Controllers;
-using ApiWebApp.Middleware;
-using GraphQL;
-using GraphQL.StartWars.Standard.Extensions;
 using Helpers;
-using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Rewrite;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-
-namespace ApiWebApp
+namespace SimpleApiWebApp
 {
-    public class Constants
-    {
-        public const string Authority = "https://p7identityserver4.azurewebsites.net/";
-    }
     public class Startup
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IStartupConfigurationService _externalStartupConfiguration;
         public Startup(
             IConfiguration configuration,
             IHostingEnvironment hostingEnvironment,
@@ -44,50 +30,28 @@ namespace ApiWebApp
         }
 
         public IConfiguration Configuration { get; set; }
+        private readonly IHostingEnvironment _hostingEnvironment;
+
+        private IStartupConfigurationService _externalStartupConfiguration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<PathPolicyConfig>(Configuration.GetSection(PathPolicyConfig.WellKnown_SectionName));
-           
-
-            services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
-            services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-           
 
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
-            services.AddStarWarsTypes();
-
             // Pass configuration (IConfigurationRoot) to the configuration service if needed
             _externalStartupConfiguration.ConfigureService(services, null);
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = Constants.Authority;
-                    options.RequireHttpsMetadata = false;
-                    options.ApiName = "nitro";
-              
-                });
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("IsAuthenticatedPolicy", policy =>
-                    policy.Requirements.Add(new IsAuthenticatedAuthorizationRequirement()));
-            });
-            services.AddSingleton<IAuthorizationHandler, SimpleAuthorizationHandler>();
             services.RemoveAll<IConfiguration>();
             services.AddSingleton<IConfiguration>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseRewriter(new RewriteOptions().Add(new RewriteLowerCaseRule()));
-            _externalStartupConfiguration.Configure(app, env, loggerFactory);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -97,14 +61,8 @@ namespace ApiWebApp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();// redirect to https is more important than authentication, so it goes first
-            app.UseAuthentication();  // make sure this is placed close to first in the pipeline.
-
-            // app.UsePathAuthorizationPolicyMiddleware must come AFTER app.UseAuthentication();
-            // app.UseAuthentication(); does the JWT stuff, and the things after rely on it.
-            app.UsePathAuthorizationPolicyMiddleware(new PathAuthorizationPolicyMiddlewareOptions());
+            app.UseHttpsRedirection();
             app.UseMvc();
-
         }
         private void StartupConfiguration(IConfiguration configuration)
         {
