@@ -14,53 +14,27 @@ namespace AzureApiFunction
 {
     public static class TheHost
     {
-        private static Dictionary<string, ServerRecord> _serversRecords;
+        private static Dictionary<string, IServerRecord> _serversRecords;
 
-        private static ServerRecord BuildServerRecord(Microsoft.AspNetCore.Http.HttpRequest req, string key,ExecutionContext context,ILogger log )
-        {
-            var serverRecord = new ServerRecord()
-            {
-                Server = key
-            };
-            var webHostBuilder = new WebHostBuilder()
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.ClearProviders();
-                    logging.AddProvider(new MyLoggerProvider(log));
-                })
-                .UseContentRoot($"{context.FunctionAppDirectory}/{serverRecord.Server}");
-            switch (key)
-            {
-                case "simpleapiwebapp":
-                    webHostBuilder.UseStartup<SimpleApiWebApp.Startup>();
-                    break;
-                case "apiwebapp":
-                    webHostBuilder.UseStartup<ApiWebApp.Startup>();
-                    break;
-                default:
-                    return null;
-            }
-            webHostBuilder.ConfigureServices(s =>
-                s.AddSingleton<IStartupConfigurationService, NullStartupConfigurationService>());
-            serverRecord.WebHostBuilder = webHostBuilder;
-            serverRecord.BaseAddress =  req.Scheme + "://" + req.Host.ToUriComponent();
-            return serverRecord;
-        }
-
-        public static Dictionary<string, ServerRecord> GetServerRecords(
-            Microsoft.AspNetCore.Http.HttpRequest req, 
-            ExecutionContext context, ILogger log)
+        public static Dictionary<string, IServerRecord> GetServersRecords(string functionAppDirectory, ILogger logger)
         {
             if (_serversRecords == null)
             {
-                var serverRecords = new Dictionary<string, ServerRecord>
+                var serverRecords = new Dictionary<string, IServerRecord>
                 {
-                    {"simpleapiwebapp", BuildServerRecord(req,"simpleapiwebapp", context, log)},
-                    {"apiwebapp", BuildServerRecord(req,"apiwebapp", context, log)}
+                    {
+                        "simpleapiwebapp",
+                        new ServerRecord<SimpleApiWebApp.Startup>(functionAppDirectory, "simpleapiwebapp", logger)
+                    },
+                    {
+                        "apiwebapp",
+                        new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, "apiwebapp", logger)
+                    }
                 };
                 _serversRecords = serverRecords;
             }
             return _serversRecords;
         }
+  
     }
 }

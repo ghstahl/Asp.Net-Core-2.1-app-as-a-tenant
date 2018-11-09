@@ -32,8 +32,10 @@ namespace AzureApiFunction
             HttpRequest req,
             ILogger log)
         {
-            var serverRecords = TheHost.GetServerRecords(req,context,log);
+            var serverRecords = TheHost.GetServersRecords(context.FunctionAppDirectory,log);
             var path = req.Path.Value.ToLower();
+            log.LogInformation($"C# HTTP trigger:{req.Method} {path}.");
+
             var query = from item in serverRecords
                 where path.StartsWith($"/{item.Key}")
                 select item.Value;
@@ -45,10 +47,8 @@ namespace AzureApiFunction
                 return response;
             }
 
-            path = path.Substring(serverRecord.Server.Length+1);
+            path = path.Substring(serverRecord.ServerName.Length+1);
             path = path + req.QueryString.Value;
-
-            log.LogInformation($"C# HTTP trigger:{req.Method} {path}.");
 
             HttpClient client = serverRecord.TestServer.CreateClient();
             client.BaseAddress = new Uri($"{req.Scheme}://{req.Host}/");
