@@ -16,9 +16,9 @@ namespace AzureApiFunction
 {
     public static class TheHost
     {
-        private static Dictionary<string, IServerRecord> _serversRecords;
+        private static List<IServerRecord> _serversRecords;
 
-        public static Dictionary<string, IServerRecord> GetServersRecords(string functionAppDirectory, IConfiguration configuration, ILogger logger)
+        public static List<IServerRecord> GetServersRecords(string functionAppDirectory, IConfiguration configuration, ILogger logger)
         {
             if (_serversRecords == null)
             {
@@ -26,11 +26,11 @@ namespace AzureApiFunction
                 TenantOptions tenantOptions = new TenantOptions();
                 configSection.Bind(tenantOptions);
 
-                var serverRecords = new Dictionary<string, IServerRecord>();
+                var serverRecords = new List<IServerRecord>();
                 foreach (var tenant in tenantOptions.Tenants)
                 {
-                    serverRecords.Add(tenant.Name,
-                        new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, tenant.Name, logger)
+                    serverRecords.Add( 
+                        new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, tenant.SettingsPath, logger)
                         {
                             BaseUrl = tenant.BaseUrl,
                             PathStringBaseUrl = new PathString(tenant.BaseUrl)

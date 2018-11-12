@@ -23,7 +23,7 @@ namespace TenantHost.Middleware
     {
         private readonly RequestDelegate _next;
         private IOptions<TenantOptions> _optionsAccessor;
-        private Dictionary<string, IServerRecord> _serversRecords;
+        private List<IServerRecord> _serversRecords;
         private ILogger _logger;
         private IHostingEnvironment _hostingEnvironment;
 
@@ -40,14 +40,14 @@ namespace TenantHost.Middleware
             _serversRecords = GetServersRecords(_hostingEnvironment.ContentRootPath, _logger);
         }
 
-        private Dictionary<string, IServerRecord> GetServersRecords(string functionAppDirectory, ILogger logger)
+        private List<IServerRecord> GetServersRecords(string functionAppDirectory, ILogger logger)
         {
 
-            var serverRecords = new Dictionary<string, IServerRecord>();
+            var serverRecords = new List<IServerRecord>();
             foreach (var tenant in _optionsAccessor.Value.Tenants)
             {
-                serverRecords.Add(tenant.Name,
-                    new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, tenant.Name, logger)
+                serverRecords.Add( 
+                    new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, tenant.SettingsPath, logger)
                     {
                         BaseUrl = tenant.BaseUrl,
                         PathStringBaseUrl = new PathString(tenant.BaseUrl)
@@ -65,8 +65,8 @@ namespace TenantHost.Middleware
                 var request = httpContext.Request;
                 var path = request.Path;
                 var query = from item in _serversRecords
-                    where path.StartsWithSegments(item.Value.PathStringBaseUrl)
-                    select item.Value;
+                    where path.StartsWithSegments(item.PathStringBaseUrl)
+                    select item;
                 var serverRecord = query.FirstOrDefault();
                 if (serverRecord != null)
                 {

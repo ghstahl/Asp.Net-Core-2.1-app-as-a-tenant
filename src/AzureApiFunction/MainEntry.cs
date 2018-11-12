@@ -43,8 +43,8 @@ namespace AzureApiFunction
             log.LogInformation($"C# HTTP trigger:{request.Method} {path}.");
 
             var query = from item in serverRecords
-                        where path.StartsWithSegments(item.Value.PathStringBaseUrl)
-                select item.Value;
+                        where path.StartsWithSegments(item.PathStringBaseUrl)
+                select item;
             var serverRecord = query.FirstOrDefault();
             HttpResponseMessage response = null;
             if (serverRecord == null)

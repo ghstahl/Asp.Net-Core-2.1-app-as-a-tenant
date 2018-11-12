@@ -11,18 +11,18 @@ namespace Tenant.Core
     public class ServerRecord<TStartup>: IServerRecord where TStartup: class
     {
         private ILogger _logger;
-        public string ServerName { get; }
         public string BaseUrl { get; set; }
         public PathString PathStringBaseUrl { get; set; }
         private string _functionAppDirectory;
-        public ServerRecord(string functionAppDirectory,string serverName,ILogger logger)
+        public ServerRecord(string functionAppDirectory,string settingsPath, ILogger logger)
         {
             _functionAppDirectory = functionAppDirectory;
-            ServerName = serverName;
+            _settingsPath = settingsPath;
             _logger = logger;
         }
        
         private TestServer _testServer;
+        private string _settingsPath;
 
         public TestServer TestServer
         {
@@ -36,7 +36,7 @@ namespace Tenant.Core
                             logging.ClearProviders();
                             logging.AddProvider(new TenantHostLoggerProvider(_logger));
                         })
-                        .UseContentRoot($"{_functionAppDirectory}/Settings/{ServerName}")
+                        .UseContentRoot($"{_functionAppDirectory}/{_settingsPath}")
                         .UseStartup<TStartup>()
                         .ConfigureServices(s =>
                         s.AddSingleton<IStartupConfigurationService, NullStartupConfigurationService>());

@@ -1,16 +1,15 @@
 {
   "tenantOptions": {
-
     "tenants": [
       {
-        "name": "TenantOne",
-        "baseUrl": "/tenant/one"
+        "settingsPath": "./settings/TenantOne",
+        "baseUrl": "/tenant/one" 
       },
       {
-        "name": "TenantTwo",
+        "settingsPath": "./settings/TenantTwo",
         "baseUrl": "/tenant/two"
       }
-    ]
+    ] 
   },
   "IsEncrypted": false,
   "Values": {
