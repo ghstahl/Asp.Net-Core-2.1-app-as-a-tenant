@@ -6,15 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace TenantHost
+namespace Tenant.Core
 {
-    public interface IServerRecord
-    {
-        TestServer TestServer { get; }
-        string ServerName { get; }
-        string BaseUrl { get; }
-        PathString PathStringBaseUrl { get; set; }
-    }
     public class ServerRecord<TStartup>: IServerRecord where TStartup: class
     {
         private ILogger _logger;
@@ -41,7 +34,7 @@ namespace TenantHost
                         .ConfigureLogging((hostingContext, logging) =>
                         {
                             logging.ClearProviders();
-                            logging.AddProvider(new MyLoggerProvider(_logger));
+                            logging.AddProvider(new TenantHostLoggerProvider(_logger));
                         })
                         .UseContentRoot($"{_functionAppDirectory}/Settings/{ServerName}")
                         .UseStartup<TStartup>()

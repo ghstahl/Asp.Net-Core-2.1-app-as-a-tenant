@@ -1,17 +1,17 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 
-namespace AzureApiFunction
+namespace Tenant.Core
 {
-    public class MyLoggerProvider : ILoggerProvider
+    public class TenantHostLoggerProvider : ILoggerProvider
     {
         private readonly ConcurrentDictionary<string, ILogger> _loggers = new ConcurrentDictionary<string, ILogger>();
         private static ILogger _logger;
-        public MyLoggerProvider(ILogger logger)
+        public TenantHostLoggerProvider(ILogger logger)
         {
             _logger = logger;
         }
-        public MyLoggerProvider()
+        public TenantHostLoggerProvider()
         {
         }
         public ILogger CreateLogger(string categoryName)

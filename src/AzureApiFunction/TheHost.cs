@@ -4,11 +4,13 @@ using System.IO;
 using ApiWebApp;
 using Helpers;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Tenant.Core;
 
 namespace AzureApiFunction
 {
@@ -16,25 +18,27 @@ namespace AzureApiFunction
     {
         private static Dictionary<string, IServerRecord> _serversRecords;
 
-        public static Dictionary<string, IServerRecord> GetServersRecords(string functionAppDirectory, ILogger logger)
+        public static Dictionary<string, IServerRecord> GetServersRecords(string functionAppDirectory, IConfiguration configuration, ILogger logger)
         {
             if (_serversRecords == null)
             {
-                var serverRecords = new Dictionary<string, IServerRecord>
+                var configSection = configuration.GetSection("tenantOptions");
+                TenantOptions tenantOptions = new TenantOptions();
+                configSection.Bind(tenantOptions);
+
+                var serverRecords = new Dictionary<string, IServerRecord>();
+                foreach (var tenant in tenantOptions.Tenants)
                 {
-                    {
-                        "simpleapiwebapp",
-                        new ServerRecord<SimpleApiWebApp.Startup>(functionAppDirectory, "simpleapiwebapp", logger)
-                    },
-                    {
-                        "apiwebapp",
-                        new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, "apiwebapp", logger)
-                    }
-                };
+                    serverRecords.Add(tenant.Name,
+                        new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, tenant.Name, logger)
+                        {
+                            BaseUrl = tenant.BaseUrl,
+                            PathStringBaseUrl = new PathString(tenant.BaseUrl)
+                        });
+                }
                 _serversRecords = serverRecords;
             }
             return _serversRecords;
         }
-  
     }
 }

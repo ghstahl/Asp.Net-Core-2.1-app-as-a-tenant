@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.WebApiCompatShim;
+using Tenant.Core.Shims;
 
 namespace AzureApiFunction
 {
@@ -28,16 +31,19 @@ namespace AzureApiFunction
         [FunctionName("MainEntry")]
         public static async Task<HttpResponseMessage> Run(
             ExecutionContext context,
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "{*all}")]
-            HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", "put", "delete", Route = "{*all}")]
+            HttpRequest request,
             ILogger log)
         {
-            var serverRecords = TheHost.GetServersRecords(context.FunctionAppDirectory,log);
-            var path = req.Path.Value.ToLower();
-            log.LogInformation($"C# HTTP trigger:{req.Method} {path}.");
+
+            var configuration = TheHostConfiguration.GetConfiguration(context.FunctionAppDirectory);
+            var serverRecords = TheHost.GetServersRecords(context.FunctionAppDirectory, configuration,log);
+
+            var path = new PathString(request.Path.Value.ToLower());
+            log.LogInformation($"C# HTTP trigger:{request.Method} {path}.");
 
             var query = from item in serverRecords
-                where path.StartsWith($"/{item.Key}")
+                        where path.StartsWithSegments(item.Value.PathStringBaseUrl)
                 select item.Value;
             var serverRecord = query.FirstOrDefault();
             HttpResponseMessage response = null;
@@ -46,52 +52,30 @@ namespace AzureApiFunction
                 response = new HttpResponseMessage(HttpStatusCode.NotFound);
                 return response;
             }
+            
 
-            path = path.Substring(serverRecord.ServerName.Length+1);
-            path = path + req.QueryString.Value;
+            var httpRequestMessageFeature = new TenantHttpRequestMessageFeature(request);
+            var httpRequestMessage = httpRequestMessageFeature.HttpRequestMessage;
 
             HttpClient client = serverRecord.TestServer.CreateClient();
-            client.BaseAddress = new Uri($"{req.Scheme}://{req.Host}/");
-            foreach (var header in req.Headers)
-            {
-                IEnumerable<string> values = header.Value;
-                if (header.Key == "Host")
-                {
-                    continue;
-                }
+            client.BaseAddress = new Uri($"{request.Scheme}://{request.Host}");
 
-                client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, values);
+            // trim off the front router hints
+            path = path.Value.Substring(serverRecord.PathStringBaseUrl.Value.Length);
+            var uriBuilder = new UriBuilder(request.Scheme, request.Host.Host)
+            {
+                Path = path,
+                Query = request.QueryString.Value
+            };
+            if (request.Host.Port != null)
+            {
+                uriBuilder.Port = (int)request.Host.Port;
             }
 
-
-            if (req.Method == "GET")
-            {
-                response = await client.GetAsync(path);
-            }
-
-            if (req.Method == "POST")
-            {
-                HttpContent content = null;
-                if (req.ContentType == "application/x-www-form-urlencoded")
-                {
-                    content = req.Form.ToFormUrlEncodedContent();
-                }
-
-                if (req.ContentType == "application/json")
-                {
-                    content = await req.Body.ToJsonContentAsync();
-                }
-
-                if (content == null)
-                {
-                    response = new HttpResponseMessage(HttpStatusCode.UnsupportedMediaType);
-                    return response;
-                }
-
-                response = await client.PostAsync(path, content);
-            }
-
-            return response;
+            httpRequestMessage.RequestUri = uriBuilder.Uri;
+            httpRequestMessage.Headers.Remove("Host");
+            var responseMessage = await client.SendAsync(httpRequestMessage);
+            return responseMessage;
         }
     }
 }

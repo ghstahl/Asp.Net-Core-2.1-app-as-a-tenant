@@ -1,10 +1,7 @@
-﻿using System.Linq;
-using System.Net;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
-using Microsoft.Net.Http.Headers;
 
-namespace ApiWebApp
+namespace Helpers
 {
     public class RewriteLowerCaseRule : IRule
     {
@@ -22,7 +19,7 @@ namespace ApiWebApp
                 }
                 else
                 {
-                    request.Host = new HostString(host.Host.ToLower(), (int) host.Port);
+                    request.Host = new HostString(host.Host.ToLower(), (int)host.Port);
                 }
             }
 

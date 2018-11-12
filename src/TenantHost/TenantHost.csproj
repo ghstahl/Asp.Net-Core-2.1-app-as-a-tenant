@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiWebApp\ApiWebApp.csproj" />
+    <ProjectReference Include="..\Tenant.Core\Tenant.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

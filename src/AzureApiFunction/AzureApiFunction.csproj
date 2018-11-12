@@ -6,35 +6,58 @@
   <ItemGroup>
     <None Remove="appsettings.Development.json" />
     <None Remove="appsettings.json" />
-    <None Remove="SimpleApiWebApp\appsettings.Development.json" />
-    <None Remove="SimpleApiWebApp\appsettings.json" />
+    <None Remove="Settings\TenantOne\appsettings.auth.json" />
+    <None Remove="Settings\TenantOne\appsettings.Development.json" />
+    <None Remove="Settings\TenantOne\appsettings.graphql.json" />
+    <None Remove="Settings\TenantOne\appsettings.json" />
+    <None Remove="Settings\TenantTwo\appsettings.auth.json" />
+    <None Remove="Settings\TenantTwo\appsettings.Development.json" />
+    <None Remove="Settings\TenantTwo\appsettings.graphql.json" />
+    <None Remove="Settings\TenantTwo\appsettings.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApiWebApp\appsettings.Development.json">
+    <Content Include="Settings\TenantOne\appsettings.auth.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ApiWebApp\appsettings.json">
+    <Content Include="Settings\TenantOne\appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="SimpleApiWebApp\appsettings.Development.json">
+    <Content Include="Settings\TenantOne\appsettings.graphql.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="SimpleApiWebApp\appsettings.json">
+    <Content Include="Settings\TenantOne\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Settings\TenantTwo\appsettings.auth.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Settings\TenantTwo\appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Settings\TenantTwo\appsettings.graphql.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Settings\TenantTwo\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.23" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ApiWebApp\ApiWebApp.csproj" />
-    <ProjectReference Include="..\SimpleApiWebApp\SimpleApiWebApp.csproj" />
+    <ProjectReference Include="..\Tenant.Core\Tenant.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
