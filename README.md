@@ -1,8 +1,27 @@
-# AspNetCoreApp-in-azure-function  
+# Multiple AspNetCoreApps In A Host
+## Where a host is an aspnetcoreapp, azure-function, and aws-lambda
+
 I am most likely commiting heresy here, but did you know that you can run the **[Microsoft.AspNetCore.TestHost.TestServer](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.testhost.testserver?view=aspnetcore-2.1 )** in an Azure function.
 
+[TenantHost](./src/TenantHost/) is a simple asp.net core 2.1 host that routes traffic to a siloed [ApiWebApp](./src/ApiWebApp/).  The TenantHost can host many instances of ApiWebApp, each of which have their own configuration.  
+
+The gotchas are: **NEVER** use statics in your downstream ApiWebApp.  There most likely are libraries out there that assume that there is only one app in in play, when in fact in the same process space there are many.
+
+The routing configurations are [HERE](./src/TenantHost/appsettings.json).  
+```
+GET 
+    http://herb.127.0.0.1.xip.io:7071/tenant/One
+    http://herb.127.0.0.1.xip.io:7071/tenant/Two
+
+```
+
+
+
+# AWS Lambdas
 I feel like I am in that SouthPark episode where everything they tried to do that was clever was already done by the Simpsons.
-In this case, AWS has already done it.
+In this case, AWS has already done it.  
+
+The AWS version of this will most likely be the TenantHost.
 
 [Create a Serverless .NET Core 2.1 Web API with AWS Lambda](https://www.youtube.com/watch?v=OhEANj3Y6ZQ)  
 So over in AWS this is a first class approach, whereas in Microsoft I have to bridge the gap in Functions using the TestServer.
@@ -67,16 +86,13 @@ I always use [xip.io](http://xip.io/) so that I am assured that the code is agno
 # Support so far.
 I don't expect to be hosting a webapp this way that serves up resources like *.css/*.js/etc.  If I were to host a HTML based website this way, all those resources would be on some CDN.  So in escense this would always be an api only way of hosting.
 
-## GET (*)
-## POST
-### CONTENT-TYPE: application/x-www-form-urlencoded
-### CONTENT-TYPE: application/json
+At the moment it is a pass through that support GET/POST/DELETE/PUT
 
 # GraphQL client [Altair](https://altair.sirmuel.design)
 
 ## GraphQL endpoint
 ```
-http://herb.127.0.0.1.xip.io:7071/api/GraphQL
+http://herb.127.0.0.1.xip.io:7071/Tenant/One/api/GraphQL
 ```
 ## Query
 ```
