@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiWebApp", "ApiWebApp\ApiW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureApiFunction", "AzureApiFunction\AzureApiFunction.csproj", "{A826C808-10EF-4C0A-A19D-EEB84363A19F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{DE739E61-2BCB-45A8-9A48-EE62D47313B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Helpers\Helpers.csproj", "{DE739E61-2BCB-45A8-9A48-EE62D47313B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQL.StartWars.Standard", "GraphQL.StartWars.Standard\GraphQL.StartWars.Standard.csproj", "{F4396777-1AB1-483E-B38B-94D6F5DB9C33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQL.StartWars.Standard", "GraphQL.StartWars.Standard\GraphQL.StartWars.Standard.csproj", "{F4396777-1AB1-483E-B38B-94D6F5DB9C33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleApiWebApp", "SimpleApiWebApp\SimpleApiWebApp.csproj", "{D8455503-EECE-4B32-9B15-37FF409D5F7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleApiWebApp", "SimpleApiWebApp\SimpleApiWebApp.csproj", "{D8455503-EECE-4B32-9B15-37FF409D5F7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenantHost", "TenantHost\TenantHost.csproj", "{6F6741AE-E10E-4721-9637-1BD54E4CC7DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D8455503-EECE-4B32-9B15-37FF409D5F7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8455503-EECE-4B32-9B15-37FF409D5F7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8455503-EECE-4B32-9B15-37FF409D5F7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F6741AE-E10E-4721-9637-1BD54E4CC7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F6741AE-E10E-4721-9637-1BD54E4CC7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F6741AE-E10E-4721-9637-1BD54E4CC7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F6741AE-E10E-4721-9637-1BD54E4CC7DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
