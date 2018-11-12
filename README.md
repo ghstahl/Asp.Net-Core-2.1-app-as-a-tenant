@@ -1,4 +1,6 @@
-# AspNetCoreApp-in-azure-function  
+# Multiple AspNetCoreApps In A Host
+## Where a host is an aspnetcoreapp, azure-function, and aws-lambda
+
 I am most likely commiting heresy here, but did you know that you can run the **[Microsoft.AspNetCore.TestHost.TestServer](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.testhost.testserver?view=aspnetcore-2.1 )** in an Azure function.
 
 [TenantHost](./src/TenantHost/) is a simple asp.net core 2.1 host that routes traffic to a siloed [ApiWebApp](./src/ApiWebApp/).  The TenantHost can host many instances of ApiWebApp, each of which have their own configuration.  
