@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 
 namespace Tenant.Core.Shims
 {
@@ -16,30 +14,30 @@ namespace Tenant.Core.Shims
         {
             if (httpRequest == null)
                 throw new ArgumentNullException(nameof(httpRequest));
-            this._httpRequest = httpRequest;
+            _httpRequest = httpRequest;
         }
 
         public HttpRequestMessage HttpRequestMessage
         {
             get
             {
-                if (this._httpRequestMessage == null)
-                    this._httpRequestMessage = TenantHttpRequestMessageFeature.CreateHttpRequestMessage(
-                        this._httpRequest);
-                return this._httpRequestMessage;
+                return _httpRequestMessage ?? (_httpRequestMessage =
+                           CreateHttpRequestMessage(_httpRequest));
             }
             set
             {
-                this._httpRequestMessage = value;
+                _httpRequestMessage = value;
             }
         }
 
         private static HttpRequestMessage CreateHttpRequestMessage(HttpRequest request)
         {
-            string requestUri = request.Scheme + "://" + (object)request.Host + request.PathBase + request.Path + (object)request.QueryString;
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(new HttpMethod(request.Method), requestUri);
-            httpRequestMessage.Content = (HttpContent)new StreamContent(request.Body);
-            foreach (KeyValuePair<string, StringValues> header in (IEnumerable<KeyValuePair<string, StringValues>>)request.Headers)
+            var requestUri = request.Scheme + "://" + request.Host + request.PathBase + request.Path + request.QueryString;
+            var httpRequestMessage = new HttpRequestMessage(new HttpMethod(request.Method), requestUri)
+            {
+                Content = new StreamContent(request.Body)
+            };
+            foreach (var header in request.Headers)
             {
                 if (!httpRequestMessage.Headers.TryAddWithoutValidation(header.Key, (IEnumerable<string>)header.Value))
                     httpRequestMessage.Content.Headers.TryAddWithoutValidation(header.Key, (IEnumerable<string>)header.Value);
