@@ -1,9 +1,9 @@
 using Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Tenant.Core.Host;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Tenant.Core

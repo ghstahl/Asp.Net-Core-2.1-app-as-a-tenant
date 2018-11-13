@@ -21,12 +21,15 @@ namespace TenantHost
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IHostingEnvironment _hostingEnvironment;
+
+        public Startup(IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
-            Configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
+            StartupConfiguration(configuration);
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -52,6 +55,21 @@ namespace TenantHost
             app.UseTenantMiddleware();
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+        private void StartupConfiguration(IConfiguration configuration)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(_hostingEnvironment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{_hostingEnvironment.EnvironmentName}.json", optional: true);
+
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+                builder.AddUserSecrets<Startup>();
+            }
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
     }
 }

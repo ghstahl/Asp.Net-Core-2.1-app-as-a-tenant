@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>7.2</LangVersion>
+    <UserSecretsId>ac11f89f-f325-43aa-82f0-d8993183282b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

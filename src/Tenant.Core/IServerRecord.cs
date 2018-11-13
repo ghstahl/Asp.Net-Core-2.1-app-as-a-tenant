@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.TestHost;
+using Tenant.Core.Host;
 
 namespace Tenant.Core
 {
