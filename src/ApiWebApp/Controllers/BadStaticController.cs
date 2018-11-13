@@ -20,14 +20,21 @@ namespace ApiWebApp.Controllers
 
         // GET: api/BadStatic
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<string>> GetAsync()
         {
             return BadStaticData;
         }
+        // GET: api/GoodSingleton/clear
+        [HttpGet]
+        [Route("clear")]
+        public async Task GetClearAsync()
+        {
+            BadStaticData.Clear();
 
+        }
         // POST: api/BadStatic
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task PostAsync([FromBody] string value)
         {
             BadStaticData.Add(value);
         }

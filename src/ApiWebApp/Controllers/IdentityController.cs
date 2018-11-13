@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ namespace ApiWebApp.Controllers
     public class IdentityController : ControllerBase
     {
         [HttpGet]
-        public ActionResult Get()
+        public async Task<ActionResult> GetAsync()
         {
             return new JsonResult(User.Claims.Select(
                 c => new { c.Type, c.Value }));

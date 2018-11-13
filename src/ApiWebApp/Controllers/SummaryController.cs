@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +50,7 @@ namespace ApiWebApp.Controllers
 
         // GET api/values
         [HttpGet]
-        public ActionResult<IDictionary<string, object>> Get()
+        public async Task<ActionResult<IDictionary<string, object>>> GetAsync()
         {
             _logger.LogInformation("Summary Executing...");
             var request = _actionContextAccessor.ActionContext.HttpContext.Request;
@@ -65,8 +66,6 @@ namespace ApiWebApp.Controllers
             value.Add("authority", $"{request.Scheme}://{request.Host.Value}");
 
             return value;
-        }
-
-        
+        }   
     }
 }

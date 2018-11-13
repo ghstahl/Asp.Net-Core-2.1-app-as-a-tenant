@@ -24,7 +24,7 @@ namespace ApiWebApp.Controllers
             var result = _dictionaryCache.Get("my_data") as IEnumerable<string>;
             return result ?? new List<string>();
         }
-        // GET: api/GoodSingleton
+        // GET: api/GoodSingleton/clear
         [HttpGet]
         [Route("clear")]
         public async Task GetClearAsync()
