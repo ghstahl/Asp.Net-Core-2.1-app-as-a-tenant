@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ApiWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,17 +19,24 @@ namespace ApiWebApp.Controllers
 
         // GET: api/GoodSingleton
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<string>> GetAsync()
         {
-            return _dictionaryCache.Get("my_data") as IEnumerable<string>;
+            var result = _dictionaryCache.Get("my_data") as IEnumerable<string>;
+            return result ?? new List<string>();
         }
-
+        // GET: api/GoodSingleton
+        [HttpGet]
+        [Route("clear")]
+        public async Task GetClearAsync()
+        {
+            _dictionaryCache.Clear();
+           
+        }
         // POST: api/GoodSingleton
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task PostAsync([FromBody] string value)
         {
             _dictionaryCache.Set("my_data",new List<string>(){value});
-           
         }
     }
 }

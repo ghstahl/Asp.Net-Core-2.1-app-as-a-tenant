@@ -20,5 +20,10 @@ namespace ApiWebApp.Services
         {
             Cache.Add(key,value);
         }
+
+        public void Clear()
+        {
+            Cache.Clear();
+        }
     }
 }

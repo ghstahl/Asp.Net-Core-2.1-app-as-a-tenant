@@ -79,24 +79,12 @@ namespace ApiWebApp.Middleware
                 {
                     // look for a perfect match
                     var policy = record.Policy;
-                    bool foundPerfectMatch = false;
                     var query = from item in record.Paths
                         where item == httpContext.Request.Path
                         select item;
                     if (!query.Any())
                     {
-                        foundPerfectMatch = true;
-                        var authorized = await authorizationService.AuthorizeAsync(
-                            httpContext.User, resource, policy);
-                        if (!authorized.Succeeded)
-                        {
-                            httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            return;
-                        }
-                    }
-
-                    if (!foundPerfectMatch)
-                    {
+                       
                         // match starting segments
                         query = from item in record.Paths
                             where item != "/" && !httpContext.Request.Path.StartsWithSegments(item)

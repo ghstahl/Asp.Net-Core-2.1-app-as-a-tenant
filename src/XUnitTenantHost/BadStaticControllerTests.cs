@@ -44,6 +44,17 @@ namespace XUnitTenantHost
             var result = JsonConvert.DeserializeObject<List<string>>(responseString);
             result.Count.ShouldBe(1);
             result[0].ShouldBe(value);
+
+            // So to pass the test proves that we have a problem and the badstatic implementation is here to highlight that statics 
+            // pollute across tentants
+            response = await _fixture.Client.GetAsync("tenant/two/api/badstatic");
+            response.EnsureSuccessStatusCode();
+            responseString = await response.Content.ReadAsStringAsync();
+            responseString.ShouldNotBeNull();
+            result = JsonConvert.DeserializeObject<List<string>>(responseString);
+            result.Count.ShouldBe(1);
+            result[0].ShouldBe(value);
         }
+      
     }
 }
