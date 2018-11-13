@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ApiWebApp.Controllers;
 using ApiWebApp.Middleware;
+using ApiWebApp.Services;
 using GraphQL;
 using GraphQL.StartWars.Standard.Extensions;
 using Helpers;
@@ -49,7 +50,7 @@ namespace ApiWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<PathPolicyConfig>(Configuration.GetSection(PathPolicyConfig.WellKnown_SectionName));
-           
+            services.AddDictionaryCache();
 
             services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
