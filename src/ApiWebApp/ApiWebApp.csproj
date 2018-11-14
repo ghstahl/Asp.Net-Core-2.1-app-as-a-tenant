@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphQL.StartWars.Standard\GraphQL.StartWars.Standard.csproj" />
+    <ProjectReference Include="..\GraphQL.StarWars.Core\GraphQL.StarWars.Core.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
   </ItemGroup>
 

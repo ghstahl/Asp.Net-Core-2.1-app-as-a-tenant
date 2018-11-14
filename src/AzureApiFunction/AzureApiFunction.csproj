@@ -60,6 +60,9 @@
     <ProjectReference Include="..\Tenant.Core\Tenant.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="function.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
