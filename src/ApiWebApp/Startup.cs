@@ -25,10 +25,7 @@ using Microsoft.Extensions.Options;
 
 namespace ApiWebApp
 {
-    public class Constants
-    {
-        public const string Authority = "https://p7identityserver4.azurewebsites.net/";
-    }
+
     public class Startup
     {
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -66,14 +63,17 @@ namespace ApiWebApp
             // Pass configuration (IConfigurationRoot) to the configuration service if needed
             _externalStartupConfiguration.ConfigureService(services, null);
 
+            var authority = Configuration["Authority"];
+
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
-                    options.Authority = Constants.Authority;
+                    options.Authority = authority;
                     options.RequireHttpsMetadata = false;
                     options.ApiName = "nitro";
-              
-                });
+                    options.ApiSecret = "secret";
+
+                }); 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("IsAuthenticatedPolicy", policy =>
