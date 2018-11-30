@@ -14,8 +14,9 @@ namespace Tenant.Core
         public string BaseUrl { get; set; }
         public PathString PathStringBaseUrl { get; set; }
         private string _functionAppDirectory;
-        public ServerRecord(string functionAppDirectory,string settingsPath, ILogger logger)
+        public ServerRecord(string tenant,string functionAppDirectory,string settingsPath, ILogger logger)
         {
+            _tenant = tenant;
             _functionAppDirectory = functionAppDirectory;
             _settingsPath = settingsPath;
             _logger = logger;
@@ -23,6 +24,7 @@ namespace Tenant.Core
        
         private TestServer _testServer;
         private string _settingsPath;
+        private string _tenant;
 
         public TestServer TestServer
         {
@@ -34,7 +36,7 @@ namespace Tenant.Core
                         .ConfigureLogging((hostingContext, logging) =>
                         {
                             logging.ClearProviders();
-                            logging.AddProvider(new TenantHostLoggerProvider(_logger));
+                            logging.AddProvider(new TenantHostLoggerProvider(_tenant,_logger));
                         })
                         .UseContentRoot($"{_functionAppDirectory}/{_settingsPath}")
                         .UseStartup<TStartup>()

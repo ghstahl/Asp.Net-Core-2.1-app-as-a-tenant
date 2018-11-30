@@ -47,7 +47,7 @@ namespace TenantHost.Middleware
             foreach (var tenant in _optionsAccessor.Value.Tenants)
             {
                 serverRecords.Add( 
-                    new ServerRecord<ApiWebApp.Startup>(functionAppDirectory, tenant.SettingsPath, logger)
+                    new ServerRecord<ApiWebApp.Startup>(tenant.Name,functionAppDirectory, tenant.SettingsPath, logger)
                     {
                         BaseUrl = tenant.BaseUrl,
                         PathStringBaseUrl = new PathString(tenant.BaseUrl)
