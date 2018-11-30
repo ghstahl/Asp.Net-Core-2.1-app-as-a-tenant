@@ -16,7 +16,7 @@ namespace AzureApiFunction
                 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 _configuration = new ConfigurationBuilder()
                     .SetBasePath(functionAppDirectory)
-                    .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile("function.settings.json", optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables()
                     .Build();
             }

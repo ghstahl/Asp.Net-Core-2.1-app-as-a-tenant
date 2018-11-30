@@ -1,16 +1,5 @@
 {
-  "tenantOptions": {
-    "tenants": [
-      {
-        "settingsPath": "./settings/TenantOne",
-        "baseUrl": "/tenant/one" 
-      },
-      {
-        "settingsPath": "./settings/TenantTwo",
-        "baseUrl": "/tenant/two"
-      }
-    ] 
-  },
+  
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
