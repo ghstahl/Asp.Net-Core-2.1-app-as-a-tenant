@@ -14,11 +14,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Tenant.Core;
 using TenantHost.Middleware;
 
 namespace TenantHost
 {
+    
     public class Startup
     {
         private IHostingEnvironment _hostingEnvironment;

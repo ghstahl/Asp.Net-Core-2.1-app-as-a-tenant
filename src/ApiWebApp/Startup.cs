@@ -39,6 +39,7 @@ namespace ApiWebApp
             _externalStartupConfiguration = externalStartupConfiguration;
             _externalStartupConfiguration.ConfigureEnvironment(hostingEnvironment);
             StartupConfiguration(configuration);
+           
         }
 
         public IConfiguration Configuration { get; set; }
@@ -112,7 +113,8 @@ namespace ApiWebApp
             var builder = new ConfigurationBuilder()
                 .SetBasePath(_hostingEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{_hostingEnvironment.EnvironmentName}.json", optional: true);
+                .AddJsonFile($"appsettings.{_hostingEnvironment.EnvironmentName}.json", optional: true)
+                .AddConfiguration(configuration)/*put last, we want it to win*/;
 
             if (_hostingEnvironment.IsDevelopment())
             {

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.WebApiCompatShim;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -26,14 +27,17 @@ namespace TenantHost.Middleware
         private List<IServerRecord> _serversRecords;
         private ILogger _logger;
         private IHostingEnvironment _hostingEnvironment;
+        private IConfiguration _configuration;
 
         public TenantMiddleware(
             IHostingEnvironment hostingEnvironment,
+            IConfiguration configuration,
             ILogger<TenantMiddleware> logger,
             IOptions<TenantOptions> optionsAccessor, 
             RequestDelegate next)
         {
             _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
             _logger = logger;
             _optionsAccessor = optionsAccessor;
             _next = next;
@@ -47,7 +51,7 @@ namespace TenantHost.Middleware
             foreach (var tenant in _optionsAccessor.Value.Tenants)
             {
                 serverRecords.Add( 
-                    new ServerRecord<ApiWebApp.Startup>(tenant.Name,functionAppDirectory, tenant.SettingsPath, logger)
+                    new ServerRecord<ApiWebApp.Startup>(tenant.Name,functionAppDirectory, tenant.SettingsPath, _configuration,logger)
                     {
                         BaseUrl = tenant.BaseUrl,
                         PathStringBaseUrl = new PathString(tenant.BaseUrl)
