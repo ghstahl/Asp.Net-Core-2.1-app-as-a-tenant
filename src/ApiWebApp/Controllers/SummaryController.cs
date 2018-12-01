@@ -14,6 +14,9 @@ namespace ApiWebApp.Controllers
     {
         private IActionContextAccessor _actionContextAccessor;
         private ILogger _logger;
+        private IConfiguration _configuration;
+        private ISingletonDictionaryCache<SummaryController> _dictionaryCache;
+
         public SummaryController(
             ISingletonDictionaryCache<SummaryController> dictionaryCache,
             IConfiguration configuration,
@@ -24,10 +27,6 @@ namespace ApiWebApp.Controllers
             _actionContextAccessor = actionContextAccessor;
             _logger = logger;
         }
-        
-        private IConfiguration _configuration;
-        private ISingletonDictionaryCache<SummaryController> _dictionaryCache;
-
 
         Dictionary<string, object> GetOutput()
         {

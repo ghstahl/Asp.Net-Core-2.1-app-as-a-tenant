@@ -2,10 +2,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+    <UserSecretsId>ac11f89f-f325-43aa-82f0-d8993183282b</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.Development.json" />
-    <None Remove="appsettings.json" />
     <None Remove="Settings\TenantOne\appsettings.auth.json" />
     <None Remove="Settings\TenantOne\appsettings.Development.json" />
     <None Remove="Settings\TenantOne\appsettings.graphql.json" />
@@ -53,6 +53,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +61,9 @@
     <ProjectReference Include="..\Tenant.Core\Tenant.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="function.settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
