@@ -11,9 +11,10 @@ namespace ApiWebApp.Services
         private Dictionary<string, object> _cache;
 
         private Dictionary<string, object> Cache => _cache ?? (_cache = new Dictionary<string, object>());
-        public object Get(string key)
+
+        public bool TryGet(string key, out object value)
         {
-            return Cache.TryGetValue(key, out var value) ? value : null;
+            return Cache.TryGetValue(key, out value);
         }
 
         public void Set(string key, object value)

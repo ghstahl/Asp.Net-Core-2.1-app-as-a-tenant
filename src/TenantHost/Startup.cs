@@ -63,7 +63,8 @@ namespace TenantHost
             var builder = new ConfigurationBuilder()
                 .SetBasePath(_hostingEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{_hostingEnvironment.EnvironmentName}.json", optional: true);
+                .AddJsonFile($"appsettings.{_hostingEnvironment.EnvironmentName}.json", optional: true)
+                .AddConfiguration(configuration);
 
             if (_hostingEnvironment.IsDevelopment())
             {

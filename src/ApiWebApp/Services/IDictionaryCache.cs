@@ -2,7 +2,7 @@
 {
     public interface IDictionaryCache
     {
-        object Get(string key);
+        bool TryGet(string key,out object value);
         void Set(string key, object value);
         void Clear();
     }

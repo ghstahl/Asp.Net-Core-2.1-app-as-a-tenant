@@ -1,14 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using ApiWebApp;
-using Helpers;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Tenant.Core;
 
@@ -18,7 +10,10 @@ namespace AzureApiFunction
     {
         private static List<IServerRecord> _serversRecords;
 
-        public static List<IServerRecord> GetServersRecords(string functionAppDirectory, IConfiguration configuration, ILogger logger)
+        public static List<IServerRecord> GetServersRecords(
+            string functionAppDirectory, 
+            IConfiguration configuration, 
+            ILogger logger)
         {
             if (_serversRecords == null)
             {
@@ -30,7 +25,12 @@ namespace AzureApiFunction
                 foreach (var tenant in tenantOptions.Tenants)
                 {
                     serverRecords.Add( 
-                        new ServerRecord<ApiWebApp.Startup>(tenant.Name,functionAppDirectory, tenant.SettingsPath, logger)
+                        new ServerRecord<ApiWebApp.Startup>(
+                            tenant.Name,
+                            functionAppDirectory, 
+                            tenant.SettingsPath, 
+                            configuration, 
+                            logger)
                         {
                             BaseUrl = tenant.BaseUrl,
                             PathStringBaseUrl = new PathString(tenant.BaseUrl)

@@ -21,8 +21,12 @@ namespace ApiWebApp.Controllers
         [HttpGet]
         public async Task<IEnumerable<string>> GetAsync()
         {
-            var result = _dictionaryCache.Get("my_data") as IEnumerable<string>;
-            return result ?? new List<string>();
+            if (_dictionaryCache.TryGet("my_data", out var result))
+            {
+                return result as List<string>;
+            }
+
+            return new List<string>();
         }
         // GET: api/GoodSingleton
         [HttpGet]
