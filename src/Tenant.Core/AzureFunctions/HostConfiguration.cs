@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 
-namespace AzureApiFunction
+namespace Tenant.Core.AzureFunctions
 {
-    public class SomeObject
-    {
-    }
-
-    public static class TheHostConfiguration
+    public static class HostConfiguration<T> where T:class
     {
         private static IConfiguration _configuration;
 
@@ -25,7 +19,7 @@ namespace AzureApiFunction
                 if (environment == "Development")
                 {
                     // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                    builder.AddUserSecrets<SomeObject>();
+                    builder.AddUserSecrets<T>();
                 }
                 builder.AddEnvironmentVariables();
 

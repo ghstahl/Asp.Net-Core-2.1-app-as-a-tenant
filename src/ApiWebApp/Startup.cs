@@ -99,7 +99,7 @@ namespace ApiWebApp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();// redirect to https is more important than authentication, so it goes first
+           
             app.UseAuthentication();  // make sure this is placed close to first in the pipeline.
 
             // app.UsePathAuthorizationPolicyMiddleware must come AFTER app.UseAuthentication();
