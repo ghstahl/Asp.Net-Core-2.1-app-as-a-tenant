@@ -30,46 +30,42 @@ namespace ApiWebApp.Controllers
 
         Dictionary<string, object> GetOutput()
         {
-            if(_dictionaryCache.TryGet("summary-output",out var result))
+            if (_dictionaryCache.TryGet("summary-output", out var result))
             {
                 return result as Dictionary<string, object>;
             }
 
-                var credits = new Dictionary<string, string>()
-                {
-                    {"ASP.NET Core Test Server", "https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-2.1"},
+            var request = _actionContextAccessor.ActionContext.HttpContext.Request;
 
-                };
-                var summary = new Dictionary<string, object>
+            var credits = new Dictionary<string, string>()
+            {
                 {
-                    {"TenantName",_configuration["TenantName"] },
-                    {"version", "1.0"},
-                    {"application", "AzureApiFunction"},
-                    {"author", "Herb Stahl"},
-                    {"credits", credits},
+                    "ASP.NET Core Test Server",
+                    "https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-2.1"
+                },
 
-                };
-            _dictionaryCache.Set("summary-output",summary);
+            };
+            var summary = new Dictionary<string, object>
+            {
+                {"TenantName", _configuration["TenantName"]},
+                {"version", "1.0"},
+                {"application", "AzureApiFunction"},
+                {"author", "Herb Stahl"},
+                {"credits", credits},
+                {"authority", $"{request.Scheme}://{request.Host.Value}" }
+            };
+         
+            _dictionaryCache.Set("summary-output", summary);
             return summary;
         }
+
         // GET api/values
         [HttpGet]
         public async Task<ActionResult<IDictionary<string, object>>> GetAsync()
         {
             _logger.LogInformation("Summary Executing...");
-            var request = _actionContextAccessor.ActionContext.HttpContext.Request;
-            var host = _actionContextAccessor.ActionContext.HttpContext.Request.Host;
-            _logger.LogInformation($"host.value:{host.Value} host.Host:{host.Host} host.HasValue:{host.HasValue} host.Port:{host.Port}");
-            _logger.LogInformation(host.ToUriComponent());
-
-            Dictionary<string, object> value = new Dictionary<string, object>();
-            foreach (var item in GetOutput())
-            {
-                value.Add(item.Key,item.Value);
-            }
-            value.Add("authority", $"{request.Scheme}://{request.Host.Value}");
-
-            return value;
+            var output = GetOutput();
+            return output;
         }   
     }
 }
