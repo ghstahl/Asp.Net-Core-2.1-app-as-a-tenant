@@ -15,22 +15,29 @@ namespace ApiWebApp.Controllers
         private IActionContextAccessor _actionContextAccessor;
         private ILogger _logger;
         private IConfiguration _configuration;
-        private ISingletonDictionaryCache<SummaryController> _dictionaryCache;
+        private ISingletonObjectCache<SummaryController, Dictionary<string, object>> _objectCache;
 
         public SummaryController(
-            ISingletonDictionaryCache<SummaryController> dictionaryCache,
+            ISingletonObjectCache<SummaryController, Dictionary<string, object>> objectCache,
             IConfiguration configuration,
             IActionContextAccessor actionContextAccessor, ILogger<SummaryController> logger)
         {
-            _dictionaryCache = dictionaryCache;
+            _objectCache = objectCache;
             _configuration = configuration;
             _actionContextAccessor = actionContextAccessor;
             _logger = logger;
+            if (_objectCache.Value == null)
+            {
+                _objectCache.Value = new Dictionary<string, object>();
+            }
         }
 
         Dictionary<string, object> GetOutput()
         {
-            if (_dictionaryCache.TryGet("summary-output", out var result))
+
+            var dictionaryCache = _objectCache.Value;
+
+            if (dictionaryCache.TryGetValue("summary-output", out var result))
             {
                 return result as Dictionary<string, object>;
             }
@@ -54,8 +61,8 @@ namespace ApiWebApp.Controllers
                 {"credits", credits},
                 {"authority", $"{request.Scheme}://{request.Host.Value}" }
             };
-         
-            _dictionaryCache.Set("summary-output", summary);
+
+            dictionaryCache.TryAdd("summary-output", summary);
             return summary;
         }
 

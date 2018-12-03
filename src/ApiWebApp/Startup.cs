@@ -48,8 +48,8 @@ namespace ApiWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<PathPolicyConfig>(Configuration.GetSection(PathPolicyConfig.WellKnown_SectionName));
-            services.AddDictionaryCache();
-
+            services.AddObjectCache();
+            
             services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
