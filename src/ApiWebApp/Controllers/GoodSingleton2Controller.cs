@@ -9,15 +9,12 @@ namespace ApiWebApp.Controllers
     [ApiController]
     public class GoodSingleton2Controller : ControllerBase
     {
-        private ISingletonObjectCache<GoodSingleton2Controller, Dictionary<string, object>> _objectCache;
+        private ISingletonAutoObjectCache<GoodSingleton2Controller, Dictionary<string, object>> _objectCache;
 
-        public GoodSingleton2Controller(ISingletonObjectCache<GoodSingleton2Controller, Dictionary<string, object>> objectCache)
+        public GoodSingleton2Controller(ISingletonAutoObjectCache<GoodSingleton2Controller, Dictionary<string, object>> objectCache)
         {
             _objectCache = objectCache;
-            if (_objectCache.Value == null)
-            {
-                _objectCache.Value = new Dictionary<string, object>();
-            }
+            
         }
 
         // GET: api/GoodSingleton
