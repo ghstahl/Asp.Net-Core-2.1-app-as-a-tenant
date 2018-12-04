@@ -1,18 +1,17 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Tenant.Core;
 
-namespace AzureApiFunction
+namespace Tenant.Core.AzureFunctions
 {
-    public static class TheHost
+    public static class TenantApps<TStartup> where TStartup: class
     {
         private static List<IServerRecord> _serversRecords;
 
-        public static List<IServerRecord> GetServersRecords(
-            string functionAppDirectory, 
-            IConfiguration configuration, 
+        public static List<IServerRecord> GetServerRecords(
+            string functionAppDirectory,
+            IConfiguration configuration,
             ILogger logger)
         {
             if (_serversRecords == null)
@@ -24,12 +23,12 @@ namespace AzureApiFunction
                 var serverRecords = new List<IServerRecord>();
                 foreach (var tenant in tenantOptions.Tenants)
                 {
-                    serverRecords.Add( 
-                        new ServerRecord<ApiWebApp.Startup>(
+                    serverRecords.Add(
+                        new ServerRecord<TStartup>(
                             tenant.Name,
-                            functionAppDirectory, 
-                            tenant.SettingsPath, 
-                            configuration, 
+                            functionAppDirectory,
+                            tenant.SettingsPath,
+                            configuration,
                             logger)
                         {
                             BaseUrl = tenant.BaseUrl,
