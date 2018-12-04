@@ -15,10 +15,10 @@ namespace ApiWebApp.Controllers
         private IActionContextAccessor _actionContextAccessor;
         private ILogger _logger;
         private IConfiguration _configuration;
-        private ISingletonObjectCache<SummaryController, Dictionary<string, object>> _objectCache;
+        private ISingletonAutoObjectCache<SummaryController, Dictionary<string, object>> _objectCache;
 
         public SummaryController(
-            ISingletonObjectCache<SummaryController, Dictionary<string, object>> objectCache,
+            ISingletonAutoObjectCache<SummaryController, Dictionary<string, object>> objectCache,
             IConfiguration configuration,
             IActionContextAccessor actionContextAccessor, ILogger<SummaryController> logger)
         {
@@ -26,10 +26,7 @@ namespace ApiWebApp.Controllers
             _configuration = configuration;
             _actionContextAccessor = actionContextAccessor;
             _logger = logger;
-            if (_objectCache.Value == null)
-            {
-                _objectCache.Value = new Dictionary<string, object>();
-            }
+           
         }
 
         Dictionary<string, object> GetOutput()
