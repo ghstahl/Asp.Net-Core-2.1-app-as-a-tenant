@@ -3,6 +3,9 @@
 
 I am most likely commiting heresy here, but did you know that you can run the **[Microsoft.AspNetCore.TestHost.TestServer](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.testhost.testserver?view=aspnetcore-2.1 )** in an Azure function.  I looked at the TestServer source code and there is no way I could write a better one, and to call it a TestServer is a disservice to its quality.  It really should be called **Microsoft.AspNetCore.TestHost.HostServer**
 
+Others have found this out as well [serverlesswebapi](https://github.com/BorisWilhelms/serverlesswebapi)  
+
+
 [TenantHost](./src/TenantHost/) is a simple asp.net core 2.1 host that routes traffic to a siloed [ApiWebApp](./src/ApiWebApp/).  The TenantHost can host many instances of ApiWebApp, each of which have their own configuration.  
 
 The gotchas are: **NEVER** use statics in your downstream ApiWebApp.  There most likely are libraries out there that assume that there is only one app in play, when in fact in the same process space there are many.  If you have downstream libraries that are incompatable with being properly tenantized then you can still use this to host a **single tenant**, because its still pretty cool to be able to host an entire asp.net core app in a function.  
@@ -66,6 +69,7 @@ and
 This maps one to one with an Azure Function's entry point and the TestServer bridges over to the asp.net core 2.1 pipeline.
 
 **So in the words of Butters, "AWS already did it!"**
+
 
 # Postman  
 [Get Postman](https://www.getpostman.com/)  
