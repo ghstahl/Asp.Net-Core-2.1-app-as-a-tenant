@@ -1,7 +1,7 @@
 # Multiple AspNetCoreApps In A Host
 ## Where a host is an aspnetcoreapp, azure-function, and aws-lambda
 
-I am most likely commiting heresy here, but did you know that you can run the **[Microsoft.AspNetCore.TestHost.TestServer](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.testhost.testserver?view=aspnetcore-2.1 )** in an Azure function.
+I am most likely commiting heresy here, but did you know that you can run the **[Microsoft.AspNetCore.TestHost.TestServer](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.testhost.testserver?view=aspnetcore-2.1 )** in an Azure function.  I looked at the TestServer source code and there is no way I could write a better one, and to call it a TestServer is a disservice to its quality.  It really should be called **Microsoft.AspNetCore.TestHost.HostServer**
 
 [TenantHost](./src/TenantHost/) is a simple asp.net core 2.1 host that routes traffic to a siloed [ApiWebApp](./src/ApiWebApp/).  The TenantHost can host many instances of ApiWebApp, each of which have their own configuration.  
 
