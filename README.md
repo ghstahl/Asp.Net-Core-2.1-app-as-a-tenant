@@ -5,7 +5,7 @@ I am most likely commiting heresy here, but did you know that you can run the **
 
 [TenantHost](./src/TenantHost/) is a simple asp.net core 2.1 host that routes traffic to a siloed [ApiWebApp](./src/ApiWebApp/).  The TenantHost can host many instances of ApiWebApp, each of which have their own configuration.  
 
-The gotchas are: **NEVER** use statics in your downstream ApiWebApp.  There most likely are libraries out there that assume that there is only one app in play, when in fact in the same process space there are many.
+The gotchas are: **NEVER** use statics in your downstream ApiWebApp.  There most likely are libraries out there that assume that there is only one app in play, when in fact in the same process space there are many.  If you have downstream libraries that are incompatable with being properly tenantized then you can still use this to host a **single tenant**, because its still pretty cool to be able to host an entire asp.net core app in a function.  
 
 The routing configurations are [HERE](./src/TenantHost/appsettings.json).  
 ```
